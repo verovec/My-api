@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+
+  # Database-related
+
+  database:
+    image: postgres:12.2-alpine
+    restart: always
+    volumes:
+      - myapi_database:/var/lib/postgresql/data
+    environment: 
+      POSTGRES_USER: "myproject"
+      POSTGRES_PASSWORD: "myprojectpwd"
+      POSTGRES_DB: "myproject"
+
+  adminer:
+    image: adminer:4.7.6
+    restart: always
+    ports:
+      - 9981:8080
+
+  # Service-related
+
+  api:
+    build: ./api
+    restart: always
+    ports:
+      - "9980:5000"
+    volumes:
+      - ./api/app:/app
+      - ./migrations:/migrations
+      - ./logs_api:/logs
+    environment: 
+      FLASK_API_VERSION: "1.0"
+      FLASK_SERVER_NAME: "MyAPI JWT API"
+      FLASK_SERVER_DESCRIPTION: "MyAPI ETNA project - JWT API"
+      FLASK_SECRET_KEY: "CHANGE ME WITH A SECURE PASSWORD"
+      FLASK_LEVEL: "dev" # dev, test or prod
+      LOG_LEVEL: "DEBUG" # DEBUG, INFO, WARNING or ERROR
+
+      POSTGRES_HOST: "database"
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: "myproject"
+      POSTGRES_PASSWORD: "myprojectpwd"
+      POSTGRES_DB: "myproject"
+    depends_on:
+      - database
+
+volumes:
+  myapi_database:

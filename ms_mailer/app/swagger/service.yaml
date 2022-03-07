@@ -1,0 +1,74 @@
+swagger: "2.0"
+
+info:
+  title: "mailer API"
+  version: "1.0"
+
+paths:
+  /mail/:
+    get:
+      responses:
+        '200':
+          description: 'Fetch a list of mail'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Mail'
+    post:
+      parameters:
+        - in: body
+          name: mail
+          schema:
+            $ref: '#/definitions/Mail'
+      responses:
+        '201':
+          description: 'Create a mail'
+  '/mail/{ids}':
+    parameters:
+      - name: ids
+        in: path
+        required: true
+        type: string
+        format: path
+    get:
+      responses:
+        '200':
+          description: 'Get a mail'
+    put:
+      parameters:
+        - in: body
+          name: mail
+          schema:
+            $ref: '#/definitions/Mail'
+      responses:
+        '200':
+          description: 'Update a mail'
+    delete:
+      responses:
+        '200':
+          description: 'Delete a mail'
+
+  '/mail/send_mail':
+    parameters:
+      - name: mail_address
+        in: query
+        required: true
+        type: string
+      - name: type
+        in: query
+        required: true
+        type: string
+    post:
+      operationId: api.mail.send_mail
+      responses:
+        '200':
+          description: 'Send mail to specify address' 
+
+definitions:
+  Mail:
+    type: object
+    properties:
+      type: { type: string }
+      content: { type: string }
+      subject: { type: string }
+      
